@@ -2,7 +2,7 @@ version: '3.7'
 
 networks:
     frontend:
-        driver: external
+        external: true
 
 services:
     app:
