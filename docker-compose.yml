@@ -12,6 +12,6 @@ services:
             - ./:/app
         ports:
             - 8501:8501
-        image: employmentServicesDashboard:latest
+        image: employment-services-dashboard:latest
         networks:
             - frontend
