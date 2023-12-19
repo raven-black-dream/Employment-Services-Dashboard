@@ -13,5 +13,6 @@ services:
         ports:
             - 8501:8501
         image: employment-services-dashboard:latest
+        container_name: employment-services-dashboard
         networks:
             - frontend
