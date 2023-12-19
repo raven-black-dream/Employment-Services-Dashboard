@@ -21,15 +21,20 @@ if 'data' not in st.session_state:
 st.title("Employment Services in BC")
 
 with st.container(border=True):
+    # This creates a group of Metrics which show the current year's value and a delta from the previous year
 
     st.header('Metrics')
 
+    # Grouping the data by year, and Service Plan Status Code, and getting a count then renaming columns and resetting the index so that
+    # the data is able to be managed the correct way in the next steps
     temp1 = st.session_state['data'].groupby([pd.Grouper(freq='1Y', key='SERVICE_START_DATE'), 'SRV_PLAN_STATUS_CD']).agg({
         'SRV_PLAN_STATUS_CD': 'count'
     }).rename(columns={'SRV_PLAN_STATUS_CD': 'count'}).reset_index()
 
+    # Creating a column which holds the previous years value
     temp1['prev'] = temp1['count'].shift(1)
     
+    # Doing the same as above, but grouping by Service Status Code
     temp2 = st.session_state['data'].groupby([pd.Grouper(freq='1Y', key='SERVICE_START_DATE'), 'SERVICE_STATUS_CD']).agg({
         'SERVICE_STATUS_CD': 'count'
     }).rename(columns={'SERVICE_STATUS_CD': 'count'}).reset_index()
@@ -172,20 +177,25 @@ with st.container(border=True):
 
 
 with st.container(border=True):
+    # This section produces a few plots
     st.header("Basic Plots")
 
+    # Grouping the data into monthly bins and by plan name
     temp = st.session_state['data'].groupby([pd.Grouper(freq='1M', key='SERVICE_START_DATE'), 'PLAN_NAME']).agg({
         'TOTAL_COST_AMT': 'sum'
     }).reset_index()
+    # Creates a plot of Monthly Total Cost by Plan Name
     fig = px.line(temp, x='SERVICE_START_DATE', y='TOTAL_COST_AMT', color="PLAN_NAME")
     st.plotly_chart(
         figure_or_data=fig
     )
 
+    # As above but gettign a monthly count of cases by gender
     temp = st.session_state['data'].groupby([pd.Grouper(freq='1M', key='SERVICE_START_DATE'), 'GENDER']).agg({
         'GENDER': 'count'
     }).rename(columns={'GENDER': 'count'}).reset_index()
-
+    
+    # Plots the Monthl Count of Cases by Gender
     fig = px.line(temp, x='SERVICE_START_DATE', y='count', color="GENDER")
     st.plotly_chart(
         fig
